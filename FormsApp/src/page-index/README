@@ -1,0 +1,1 @@
+src="<%= require('../img/game.jpg') %>"
