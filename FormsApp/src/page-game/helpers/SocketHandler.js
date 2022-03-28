@@ -18,6 +18,11 @@ export default class SocketHandler{
             // scene.closeButton.setColor('#00ffff');
         })
 
+
+        scene.socket.on('couponCode', (message)=> {
+            alert(message, 'You should close the Tab!');
+        });
+
         scene.socket.on('placeScene', (index) =>{
             console.log('Placing next scene');
             /**
@@ -244,6 +249,7 @@ export default class SocketHandler{
             var survey = new Survey.Model(surveyJSON);
             function sendDataToServer(survey, options) {
                 scene.socket.emit('survey-data', survey.data);
+
             }
 
             scene.surveyButton = scene.add.text(1380,900,"Take Survey").setFontSize(20).setFontFamily('Trebuchet MS');

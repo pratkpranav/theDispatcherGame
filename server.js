@@ -12,7 +12,8 @@ const io = require('socket.io')(https,{
 });
 const { v4: uuidv4 } = require('uuid');
 const dateTime = require('node-datetime');
-const storeDirectory  = "Data/";
+const storeDirectory  = "./Data/";
+const util = require('util');
 
 class StateMachine{
     constructor(id, startTime){
@@ -108,17 +109,23 @@ io.on('connection', function(socket){
                 finalId = i;
             }
         }
-        let fileName = storeDirectory.concat(roomId);
-        try {
-            fs.writeFileSync(fileName, statestore[finalId])
-          } catch (err) {
-            console.error(err)
-          }
-          
+        let fileName = roomId.concat(".json");
+        console.log(fileName);
+        fs.writeFile(path.join(__dirname,"Data",fileName), JSON.stringify(statestore[finalId]), 'utf8', function (err) {
+            if (err) {
+                console.log("An error occured while writing JSON Object to File.");
+                return console.log(err);
+            }
+            console.log("JSON file has been saved.");
+        });
         console.log(statestore[finalId]);
+        let finalMessage = "Your token is ";
+        let message = finalMessage.concat(roomId);
+        let dt = dateTime.create();
+        let formatted = dt.format('Y-m-d H:M:S');
+        statestore[finalId].endTime = formatted;
+        io.to(roomId).emit('couponCode', message);
     })
-
-    
 })
 
 
