@@ -9,6 +9,9 @@ export default class GameHandler{
         this.pathButton = null;
         this.selectedCar = null;
         this.selectedCustomer = null;
+        this.waitingTimeHeader = null;
+        this.blueWaitingCustomer = null;
+        this.redWaitingCustomer = null;
 
         this.promptOutputPath = (carId,customerId) => {
             this.carId = scene.add.text(1300,100, "Car id: " + carId);
@@ -26,10 +29,10 @@ export default class GameHandler{
         }
 
         this.promptWaitTime = () => {
-            this.waitingTImeHeader = scene.add.text(1380,420,"Waiting Time").setFontSize(20).setFontFamily('Trebuchet MS');
-            this.waitingTImeHeader.setColor('#00ffff');
-            this.blueWaitingCustomer = scene.add.image(1380, 560 , 'redBoy');
-            this.redWaitingCustomer = scene.add.image(1380, 710 , 'blueBoy');
+            this.waitingTimeHeader = scene.add.text(1380,420,"Waiting Time").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.waitingTimeHeader.setColor('#00ffff');
+            this.blueWaitingCustomer = scene.add.image(1380, 560 , 'blueBoy');
+            this.redWaitingCustomer = scene.add.image(1380, 710 , 'redBoy');
         }
 
         

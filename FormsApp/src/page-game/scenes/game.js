@@ -29,13 +29,17 @@ export default class Game extends Phaser.Scene {
                     if(this.blueCustomerText!=null){
                         this.blueCustomerText.destroy();
                     }
-                    this.blueCustomerText = this.add.text(1500,710,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS');
+                    if(!this.hideBlueText){
+                        this.blueCustomerText = this.add.text(1500,560,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS');
+                    }
                     //blue
                 }else{
                     if(this.redCustomerText!=null){
                         this.redCustomerText.destroy();
                     }
-                    this.redCustomerText = this.add.text(1500,560,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS');
+                    if(!this.hideRedText){
+                        this.redCustomerText = this.add.text(1500,710,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS');
+                    }
                     //red
                 }
             }
@@ -138,6 +142,8 @@ export default class Game extends Phaser.Scene {
         this.InteractiveHandler = new InteractiveHandler(this,this.GameHandler);
         this.SocketHandler = new SocketHandler(this,this.GameHandler);
         this.updateTime = 0;
+        this.hideBlueText = false;
+        this.hideRedText = false;
         this.updateWaitTime();
     }
     update() {

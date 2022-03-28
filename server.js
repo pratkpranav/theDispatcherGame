@@ -1,34 +1,44 @@
 const app = require('express')();
-const http = require('http').createServer(app, {
-    cookie:true
-});
+const https = require('http').createServer(app);
 const cors = require('cors');
 const path = require('path');
 const serveStatic = require('serve-static')
-const io = require('socket.io')(http,{
+const fs = require('fs');
+const io = require('socket.io')(https,{
     cors: {
         origin: 'http://localhost:8080',
         method: ["GET","POST"]
     }
 });
 const { v4: uuidv4 } = require('uuid');
-const cookie = require('cookie');
-const cookieIoParser = require('socket.io-cookie-parser');
+const dateTime = require('node-datetime');
+const storeDirectory  = "Data/";
 
+class StateMachine{
+    constructor(id, startTime){
+        this.id = id;
+        this.currentState = 1;
+        this.stateData = [];
+        this.startTime = startTime;
+        this.endTime = null;
+    }
 
+    endTime(endTime){
+        this.endTime = endTime;
+    }
+
+    surveyData(surveyData){
+        this.surveyData = surveyData;
+    }
+}
 
 
 app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
 
-io.use(cookieIoParser());
 
-
-let responses = [];
-let curresp = [];
 let totalslides = 4;
-let current = 1;
-let statestore = {};
+let statestore = [];
 
 
 
@@ -38,14 +48,22 @@ io.on('connection', function(socket){
     socket.join(roomId);
     console.log(roomId);
     console.log(socket.rooms);
-    statestore[roomId] = 0;
     console.log(socket.rooms.has(roomId));
-    
+    let dt = dateTime.create();
+    let formatted = dt.format('Y-m-d H:M:S');
+    let newState = new StateMachine(roomId, formatted);
+    statestore.push(newState);
     
     socket.on('NextScene',function(socketID){
-        responses.push(curresp);
         console.log('Sending Next Scene');
-        current++;
+        let current = 0;
+        for(let i=0; i<statestore.length; i++){
+            if(statestore[i].id === roomId){
+                current = statestore[i].currentState+1;
+                statestore[i].currentState+=1;
+                break;
+            }
+        }
         if(current<totalslides+1){
             io.to(roomId).emit('placeScene', current);
             if(current == totalslides){
@@ -60,8 +78,18 @@ io.on('connection', function(socket){
         let cur = [];
         cur.push(carId);
         cur.push(customerID);
+        for(let i=0; i<statestore.length; i++){
+            if(statestore[i].id === roomId){
+                if(statestore[i].stateData.length<statestore[i].currentState){
+                    statestore[i].stateData.push([]);
+                    statestore[i].stateData[statestore[i].currentState-1].push(cur);
+                    break;
+                }else{
+                    statestore[i].stateData[statestore[i].currentState-1].push(cur);
+                }
+            }
+        }
         console.log(roomId, cur);
-        curresp.push(cur);
         io.to(roomId).emit('disableCarCustomerInteractivity',cur);
     })
     
@@ -71,7 +99,23 @@ io.on('connection', function(socket){
     })
 
     socket.on('survey-data',function(data){
+
         console.log(roomId,data);
+        let finalId = 0;
+        for(let i=0; i<statestore.length; i++){
+            if(statestore[i].id === roomId){
+                statestore[i].surveyData(data);
+                finalId = i;
+            }
+        }
+        let fileName = storeDirectory.concat(roomId);
+        try {
+            fs.writeFileSync(fileName, statestore[finalId])
+          } catch (err) {
+            console.error(err)
+          }
+          
+        console.log(statestore[finalId]);
     })
 
     
@@ -80,6 +124,6 @@ io.on('connection', function(socket){
 
 const port = process.env.PORT || 3000;
 
-http.listen(port, () => {
+https.listen(port, () => {
     console.log('Server Started');
-        });
+});

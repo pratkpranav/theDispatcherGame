@@ -1,8 +1,8 @@
 import io from 'socket.io-client';
-import 'survey-react/survey.css'
+import 'survey-react/survey.css';
 import * as Survey from "survey-jquery";
 import $ from "jquery";
-
+import './defaultV2.css';
 
 export default class SocketHandler{
     constructor(scene, GameHandler){
@@ -37,9 +37,12 @@ export default class SocketHandler{
             this.GameHandler.infoDist = null;
             this.GameHandler.pathButton = null;
             this.GameHandler.selectedCar = null;
+            scene.hideBlueText = false;
+            scene.hideRedText = false;
             // this.GameHandler.hideAnyPath();
             scene.currentMap = index-1;
             scene.Maps[index-1].show(scene);
+            scene.updateWaitTime();
             for(let i=0; i< scene.Maps[scene.currentMap].cars.length; i++){
                 scene.Maps[scene.currentMap].cars[i].instance.on('pointerdown', () => {
                     this.GameHandler.hideAnyPath(); 
@@ -102,7 +105,7 @@ export default class SocketHandler{
 
         scene.socket.on('deleteNext',() => {
             scene.nextButton.destroy();
-            Survey.StylesManager.applyTheme("modern");
+            Survey.StylesManager.applyTheme("defaultV2");
     
             var surveyJSON = {
             "title": "Survey",
@@ -276,7 +279,25 @@ export default class SocketHandler{
             this.GameHandler.hideAnyPath();
             scene.finalCustomerSelected.push(inp[1]);
             scene.finalCarSelected.push(inp[0]);
-            
+            if(scene.customerColor[inp[1]]===0){
+                scene.hideRedText = true;
+                if(this.GameHandler.redWaitingCustomer!=null){
+                    this.GameHandler.redWaitingCustomer.destroy();
+                    // scene.updateWaitTime();
+                }
+                if(scene.redCustomerText!=null){
+                    scene.redCustomerText.destroy();
+                }
+            }else{
+                scene.hideBlueText = true;
+                if(this.GameHandler.blueWaitingCustomer!=null){
+                    this.GameHandler.blueWaitingCustomer.destroy();
+                    // scene.updateWaitTime();
+                }
+                if(scene.blueCustomerText!=null){
+                    scene.blueCustomerText.destroy();
+                }
+            }
             let carSelected = scene.Maps[scene.currentMap].cars[inp[0]];
             let customerSelected = scene.Maps[scene.currentMap].customers[inp[1]];
             let v1 = scene.add.image(carSelected.screenX,carSelected.screenY, 'carBW');
