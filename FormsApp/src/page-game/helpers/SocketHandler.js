@@ -20,7 +20,7 @@ export default class SocketHandler{
 
 
         scene.socket.on('couponCode', (message)=> {
-            alert(message, 'You should close the Tab!');
+            alert(message);
         });
 
         scene.socket.on('placeScene', (index) =>{

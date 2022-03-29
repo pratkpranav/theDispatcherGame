@@ -120,7 +120,7 @@ io.on('connection', function(socket){
         });
         console.log(statestore[finalId]);
         let finalMessage = "Your token is ";
-        let message = finalMessage.concat(roomId);
+        let message = finalMessage.concat(roomId, ". You can close the Tab.");
         let dt = dateTime.create();
         let formatted = dt.format('Y-m-d H:M:S');
         statestore[finalId].endTime = formatted;
