@@ -38,7 +38,7 @@ app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
 
 app.get('/', function(req,res){
-    res.sendFile('index.html');
+    res.render('index.html');
 })
 
 let totalslides = 4;
