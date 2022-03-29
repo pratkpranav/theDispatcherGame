@@ -37,9 +37,6 @@ class StateMachine{
 app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
 
-app.get('/', function(req,res){
-    res.sendFile(path.join(__dirname + "/FormsApp/dist" + '/index.html'));
-})
 
 let totalslides = 4;
 let statestore = [];
