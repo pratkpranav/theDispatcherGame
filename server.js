@@ -1,6 +1,6 @@
 const server = require('express');
 const app = server();
-const https = require('http').createServer(server);
+const https = require('http').createServer(app);
 const cors = require('cors');
 const path = require('path');
 const serveStatic = require('serve-static')
