@@ -283,6 +283,7 @@ export default class SocketHandler{
             this.GameHandler.removeSelectedCar();
             this.GameHandler.removeSelectedCustomer();
             this.GameHandler.hideAnyPath();
+            scene.currentlySelected = null;
             scene.finalCustomerSelected.push(inp[1]);
             scene.finalCarSelected.push(inp[0]);
             if(scene.customerColor[inp[1]]===0){

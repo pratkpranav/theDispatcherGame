@@ -1,12 +1,13 @@
-const app = require('express')();
-const https = require('http').createServer(app);
+const server = require('express');
+const app = server();
+const https = require('http').createServer(server);
 const cors = require('cors');
 const path = require('path');
 const serveStatic = require('serve-static')
 const fs = require('fs');
 const io = require('socket.io')(https,{
     cors: {
-        origin: 'https://taxidispatcher.herokuapp.com/',
+        origin: '*',
         method: ["GET","POST"]
     }
 });
@@ -32,7 +33,6 @@ class StateMachine{
         this.surveyData = surveyData;
     }
 }
-
 
 app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
