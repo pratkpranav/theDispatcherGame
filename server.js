@@ -7,7 +7,7 @@ const serveStatic = require('serve-static')
 const fs = require('fs');
 const io = require('socket.io')(https,{
     cors: {
-        origin: 'https://taxidispatcher.herokuapp.com/',
+        origin: '*',
         method: ["GET","POST"]
     }
 });
