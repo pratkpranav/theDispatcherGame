@@ -25,11 +25,11 @@ class StateMachine{
         this.endTime = null;
     }
 
-    endTime(endTime){
+    addEndTime(endTime){
         this.endTime = endTime;
     }
 
-    surveyData(surveyData){
+    addSurveyData(surveyData){
         this.surveyData = surveyData;
     }
 }
@@ -38,7 +38,7 @@ app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
 
 
-let totalslides = 4;
+let totalslides = 19;
 let statestore = [];
 
 
@@ -83,6 +83,7 @@ io.on('connection', function(socket){
             if(statestore[i].id === roomId){
                 if(statestore[i].stateData.length<statestore[i].currentState){
                     statestore[i].stateData.push([]);
+                    statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
                     statestore[i].stateData[statestore[i].currentState-1].push(cur);
                     break;
                 }else{
@@ -105,11 +106,14 @@ io.on('connection', function(socket){
         let finalId = 0;
         for(let i=0; i<statestore.length; i++){
             if(statestore[i].id === roomId){
-                statestore[i].surveyData(data);
+                statestore[i].addSurveyData(data);
                 finalId = i;
             }
         }
         let fileName = roomId.concat(".json");
+        let dt = dateTime.create();
+        let formatted = dt.format('Y-m-d H:M:S');
+        statestore[finalId].addEndTime(formatted);
         console.log(fileName);
         fs.writeFile(path.join(__dirname,"Data",fileName), JSON.stringify(statestore[finalId]), 'utf8', function (err) {
             if (err) {
@@ -121,9 +125,7 @@ io.on('connection', function(socket){
         console.log(statestore[finalId]);
         let finalMessage = "Your token is ";
         let message = finalMessage.concat(roomId, ". You can close the Tab.");
-        let dt = dateTime.create();
-        let formatted = dt.format('Y-m-d H:M:S');
-        statestore[finalId].endTime = formatted;
+        
         io.to(roomId).emit('couponCode', message);
     })
 })
