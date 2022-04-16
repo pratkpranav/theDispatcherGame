@@ -38,7 +38,7 @@ app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
 
 
-let totalslides = 19;
+let totalslides = 3;
 let statestore = [];
 
 
