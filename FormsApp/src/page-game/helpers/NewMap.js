@@ -147,10 +147,19 @@ export default class NewMap{
 
         for (let i = 0; i < data["cordX"].length; i++) {
             if (data["isCar"][i] === 1) {
-                let v1 = scene.add.image(preX + (data["cordX"][i] - 1) * dimX, preY + (data["cordY"][i] - 1) * dimY, 'car').setInteractive();
+              if(data["isRed"][i]){  
+                let v1 = scene.add.image(preX + (data["cordX"][i] - 1) * dimX, preY + (data["cordY"][i] - 1) * dimY, 'greenCar').setInteractive();
                 v1.setScale(scene.scalefactor);
                 this.addcars(data["cordX"][i], data["cordY"][i], preX + (data["cordX"][i] - 1) * dimX , preY + (data["cordY"][i] - 1) * dimY, v1);
-                
+                scene.carColor.push(0); // 0 for green
+              }else{
+                let v1 = scene.add.image(preX + (data["cordX"][i] - 1) * dimX, preY + (data["cordY"][i] - 1) * dimY, 'yellowCar').setInteractive();
+                v1.setScale(scene.scalefactor);
+                this.addcars(data["cordX"][i], data["cordY"][i], preX + (data["cordX"][i] - 1) * dimX , preY + (data["cordY"][i] - 1) * dimY, v1);
+                scene.carColor.push(1); // 1 for yellow
+              }
+              scene.carWaitingTime.push(data["WaitingTime"][i]);
+              
             } else {
                 if(data["isRed"][i]){
                     let v2 = scene.add.image(preX + (data["cordX"][i] - 1) * dimX, preY + (data ["cordY"][i] - 1) * dimY, 'redBoy').setInteractive();
@@ -163,7 +172,7 @@ export default class NewMap{
                     this.addcustomers(data["cordX"][i], data["cordY"][i], preX + (data["cordX"][i] - 1) * dimX , preY + (data["cordY"][i] - 1) * dimY, v2);
                     scene.customerColor.push(1); // 1 for blue
                 }
-                scene.customerWaitingTime.push(data["customerWaitingTime"][i]);
+                scene.customerWaitingTime.push(data["WaitingTime"][i]);
             }
         }
 

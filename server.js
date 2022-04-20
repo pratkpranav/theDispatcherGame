@@ -54,10 +54,39 @@ io.on('connection', function(socket){
     let formatted = dt.format('Y-m-d H:M:S');
     let newState = new StateMachine(roomId, formatted);
     statestore.push(newState);
+    for(let i=0; i<statestore.length; i++){
+        if(statestore[i].id === roomId){
+            if(statestore[i].stateData.length<statestore[i].currentState){
+                statestore[i].stateData.push([]);
+                statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
+                statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                break;
+            }else{
+                statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+            }
+        }
+    }
     
     socket.on('NextScene',function(socketID){
         console.log('Sending Next Scene');
         let current = 0;
+        let dt = dateTime.create();
+        let formatted = dt.format('Y-m-d H:M:S');
+        for(let i=0; i<statestore.length; i++){
+            if(statestore[i].id === roomId){
+                if(statestore[i].stateData.length<=statestore[i].currentState){
+                    console.log('New Entry');
+                    statestore[i].stateData[statestore[i].stateData.length-1].push([formatted]);
+                    statestore[i].stateData.push([]);
+                    statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
+                    statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                    break;
+                }else{
+                    console.log('Old Entry');
+                    statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                }
+            }
+        }
         for(let i=0; i<statestore.length; i++){
             if(statestore[i].id === roomId){
                 current = statestore[i].currentState+1;
@@ -81,14 +110,7 @@ io.on('connection', function(socket){
         cur.push(customerID);
         for(let i=0; i<statestore.length; i++){
             if(statestore[i].id === roomId){
-                if(statestore[i].stateData.length<statestore[i].currentState){
-                    statestore[i].stateData.push([]);
-                    statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
-                    statestore[i].stateData[statestore[i].currentState-1].push(cur);
-                    break;
-                }else{
-                    statestore[i].stateData[statestore[i].currentState-1].push(cur);
-                }
+                statestore[i].stateData[statestore[i].currentState-1].push(cur);
             }
         }
         console.log(roomId, cur);

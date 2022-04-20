@@ -5,11 +5,11 @@ export default class UIHandler{
             // scene.closeButton = scene.add.text(1380,600,"Close").setFontSize(20).setFontFamily('Trebuchet MS');
         }
         this.buildPrompt = () => {
-            scene.promptScreen = scene.add.rectangle(1440,200,300,300);
+            scene.promptScreen = scene.add.rectangle(1600,200,600,300);
             scene.promptScreen.setStrokeStyle(4, 0xff69b4);
         }
         this.buildWaitingTimePrompt = () => {
-            scene.waitTimePrompt = scene.add.rectangle(1440,600,300,400);
+            scene.waitTimePrompt = scene.add.rectangle(1600,600,600,400);
             scene.waitTimePrompt.setStrokeStyle(4, 0xff69b4);
         }
 

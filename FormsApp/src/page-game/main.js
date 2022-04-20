@@ -7,12 +7,13 @@ const config = {
     type: Phaser.AUTO,
     scale: {
         mode: Phaser.Scale.FIT,
-        width: 1600,
+        width: 1920,
         height: 1024
     },
     scene: [
         Game
-    ]
+    ],
+    backgroundColor: '#FFFFFF',
 };
 
 const game = new Phaser.Game(config);

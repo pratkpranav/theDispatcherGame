@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My homepage</title>
+  <title>The Dispatcher Game</title>
   <meta charset="UTF-8">
   <meta http-equiv="cache-control" content="no-cache"/>
   <meta http-equiv="pragma" content="no-cache"/>
@@ -20,13 +20,13 @@
   }
   
   .bgimg {
-    background-position: center;
+    background-position: center;                                                                                                                                                                                                                                                                                                          
     background-size: cover;
     min-height: 75%;
   }
   
   </style>
-</head>
+</head>        
 <%= require('../partials/nav.html?raw') %>
 <body>
 
@@ -70,6 +70,16 @@
              saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus 
              maiores alias consequatur aut perferendis doloribus asperiores repella</p>
         </div>
+
+
+        <div class="mySlides">
+
+    <div class="w3-content" style="max-width:700px">
+      <button class="button">
+        <a href="game.html">Start Game</a>
+    </button>
+        </div>
+        </div>
       
         <!-- Next/prev buttons -->
         <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
@@ -81,16 +91,12 @@
         <span class="dot" onclick="currentSlide(1)"></span>
         <span class="dot" onclick="currentSlide(2)"></span>
         <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
       </div>
     </div>
 
   </div>
 
-    <div class="w3-content" style="max-width:700px">
-      <button class="button">
-        <a href="game.html">Game</a>
-    </button>
-        </div>
   <!-- intercepted by a resourceQuery in the webpack config -->
   
 

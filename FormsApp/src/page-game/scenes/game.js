@@ -11,6 +11,8 @@ import roadImg from '../assets/road.jpeg'
 import wallImg from '../assets/wall.jpeg'
 import redBoy from '../assets/redBoy.jpg'
 import blueBoy from '../assets/blueBoy.jpg'
+import greenCar from '../assets/greenCar.jpg'
+import yellowCar from '../assets/yellowCar.jpg'
 
 
 export default class Game extends Phaser.Scene {
@@ -23,6 +25,15 @@ export default class Game extends Phaser.Scene {
 
     updateWaitTime() {
         console.log('updating wait time!!');
+        if(this.timeRemaining!=null){
+            this.timeRemaining.destroy();
+        }
+        this.timeRemaining = this.add.text(1670,900, this.sceneTime).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+        this.sceneTime-=1;
+        if(this.sceneTime==0){
+            this.SocketHandler.placeSceneFunction();
+            // this.sceneTime = 50;
+        }
         for(let i=0; i<this.customerWaitingTime.length; i++){
             if(this.customerColor.length > i){
                 if(this.customerColor[i]==1){
@@ -30,7 +41,7 @@ export default class Game extends Phaser.Scene {
                         this.blueCustomerText.destroy();
                     }
                     if(!this.hideBlueText){
-                        this.blueCustomerText = this.add.text(1500,560,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS');
+                        this.blueCustomerText = this.add.text(1500,560,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
                     }
                     //blue
                 }else{
@@ -38,9 +49,30 @@ export default class Game extends Phaser.Scene {
                         this.redCustomerText.destroy();
                     }
                     if(!this.hideRedText){
-                        this.redCustomerText = this.add.text(1500,710,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS');
+                        this.redCustomerText = this.add.text(1500,710,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
                     }
                     //red
+                }
+            }
+        }
+        for(let i=0; i<this.carWaitingTime.length; i++){
+            if(this.carColor.length > i){
+                if(this.carColor[i]==1){
+                    if(this.yellowCarText!=null){
+                        this.yellowCarText.destroy();
+                    }
+                    if(!this.hideYellowText){
+                        this.yellowCarText = this.add.text(1820,560,this.carWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+                    }
+                    //yellow
+                }else{
+                    if(this.greenCarText!=null){
+                        this.greenCarText.destroy();
+                    }
+                    if(!this.hideGreenText){
+                        this.greenCarText = this.add.text(1820,710,this.carWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+                    }
+                    //green
                 }
             }
         }
@@ -56,12 +88,14 @@ export default class Game extends Phaser.Scene {
         this.load.image('wall', wallImg);
         this.load.image('blueBoy', blueBoy);
         this.load.image('redBoy', redBoy);
+        this.load.image('greenCar', greenCar); //isRed
+        this.load.image('yellowCar', yellowCar); //isBlue
     }
 
 
     create() {
 
-
+        // enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
         const mat0 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1], [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -72,9 +106,9 @@ export default class Game extends Phaser.Scene {
             "cordY": [1, 3, 13, 5],
             "isCar": [1, 0, 0, 1],
             "isCustomer": [0, 1, 1, 0],
-            "isRed": [0, 0, 1, 0],
-            "isBlue": [0, 1, 0, 0],
-            "customerWaitingTime": [0,20,20,0]
+            "isRed": [1, 0, 1, 0],
+            "isBlue": [0, 1, 0, 1],
+            "WaitingTime": [6,20,20,13]
         };
 
         const mat1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -87,9 +121,9 @@ export default class Game extends Phaser.Scene {
             "cordY": [8, 2, 14, 8],
             "isCar": [1, 0, 0, 1],
             "isCustomer": [0, 1, 1, 0],
-            "isRed": [0, 0, 1, 0],
-            "isBlue": [0, 1, 0, 0],
-            "customerWaitingTime": [0,5,50,0]
+            "isRed": [0, 0, 1, 1],
+            "isBlue": [1, 1, 0, 0],
+            "WaitingTime": [7,5,50,19]
         };
         
         const mat2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
@@ -102,9 +136,9 @@ export default class Game extends Phaser.Scene {
             "cordY": [10, 9, 11, 10],
             "isCar": [1, 0, 0, 1],
             "isCustomer": [0, 1, 1, 0],
-            "isRed": [0, 0, 1, 0],
-            "isBlue": [0, 1, 0, 0],
-            "customerWaitingTime": [0,5,15,0]
+            "isRed": [0, 0, 1, 1],
+            "isBlue": [1, 1, 0, 0],
+            "WaitingTime": [4,5,15,10]
         };
         
         const mat3 = [[0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], [0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], 
@@ -117,9 +151,9 @@ export default class Game extends Phaser.Scene {
             "cordY": [7, 13, 11, 9],
             "isCar": [1, 0, 0, 1],
             "isCustomer": [0, 1, 1, 0],
-            "isRed": [0, 0, 1, 0],
-            "isBlue": [0, 1, 0, 0],
-            "customerWaitingTime": [0,4,13,0]
+            "isRed": [1, 0, 1, 0],
+            "isBlue": [0, 1, 0, 1],
+            "WaitingTime": [19,4,13,20]
         };
         
         
@@ -148,29 +182,45 @@ export default class Game extends Phaser.Scene {
         this.finalCarSelected = []; 
         this.customerWaitingTime = [];
         this.customerColor = [];
+        this.carColor = [];
+        this.carWaitingTime = [];
         this.Maps[0].show(this);
         this.UIHandler = new UIHandler(this);
         this.UIHandler.buildUI();
         this.GameHandler = new GameHandler(this);
-        this.GameHandler.promptWaitTime();
+        this.GameHandler.promptWaitTimeCustomer();
+        this.GameHandler.promptWaitTimeCar();
         this.InteractiveHandler = new InteractiveHandler(this,this.GameHandler);
         this.SocketHandler = new SocketHandler(this,this.GameHandler);
         this.updateTime = 0;
+        this.inputCount = 0;
         this.hideBlueText = false;
         this.hideRedText = false;
+        this.hideGreenText = false;
+        this.hideYellowText = false;
+        this.sceneTime = 50;
+        this.timeRemainingSign = this.add.text(1500,900, 'Time Remaining: ').setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
         this.updateWaitTime();
+        this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
     }
     update() {
         // this.updateWaitTime();
         this.updateTime += 1;
         // this.updateTime++;
-        if(this.updateTime%600==0){
+        if(this.updateTime%100==0){
             this.updateWaitTime();
             
             for(let i=0; i<this.customerWaitingTime.length; i++){
                 
                 this.customerWaitingTime[i]+=1;
+                this.carWaitingTime[i]+=1;
             }
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.enter) && this.currentlySelectedCustomer!=null && this.currentlySelectedCar!=null)
+        {
+            console.log('Path Selected!!');
+            this.socket.emit("selectedCustomer",this.currentlySelectedCustomer,this.currentlySelectedCar);
         }
     }
 }

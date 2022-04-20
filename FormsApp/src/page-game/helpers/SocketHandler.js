@@ -7,6 +7,86 @@ import './defaultV2.css';
 export default class SocketHandler{
     constructor(scene, GameHandler){
 
+        this.placeSceneFunction = () => {
+        console.log('Placing next scene');
+        /**
+         * Initializations of scene for each Map
+         */
+        scene.sceneTime = 50;
+        scene.currentlySelectedCar = null;
+        scene.finalCustomerSelected=[];
+        scene.finalCarSelected=[];
+        scene.customerWaitingTime = [];
+        scene.customerColor = [];
+        scene.carColor = [];
+        // this.GameHandler.hideAnyPath();
+        this.GameHandler.promptWaitTimeCustomer();
+        this.GameHandler.promptWaitTimeCar();
+        this.GameHandler.removeOutputPath();
+        this.GameHandler.dots = [];
+        this.GameHandler.carId = null;
+        this.GameHandler.customerId = null;
+        this.GameHandler.infoDist = null;
+        this.GameHandler.pathButton = null;
+        this.GameHandler.selectedCar = null;
+        scene.hideBlueText = false;
+        scene.hideRedText = false;
+        scene.hideYellowText = false;
+        scene.hideGreenText = false;
+        scene.inputCount = 0;
+        // this.GameHandler.hideAnyPath();
+        scene.currentMap = index-1;
+        scene.Maps[index-1].show(scene);
+        scene.updateWaitTime();
+        for(let i=0; i< scene.Maps[scene.currentMap].cars.length; i++){
+            scene.Maps[scene.currentMap].cars[i].instance.on('pointerdown', () => {
+                this.GameHandler.hideAnyPath(); 
+                this.GameHandler.removeOutputPath();
+                scene.socket.emit("selectedCar", i);
+                if(scene.currentlySelectedCar==null){
+                    this.GameHandler.drawSelectedCar(i);
+                    // this.GameHandler.hideCustomers();
+                    // this.GameHandler.createDots();
+                    scene.currentlySelectedCar = i;
+                    // scene.socket.emit('createDots');
+                }else{
+                    this.GameHandler.removeSelectedCar();
+                    if(scene.currentlySelectedCar==i){
+                        scene.currentlySelectedCar = null;
+                        // this.GameHandler.destroyDots();
+                        // this.GameHandler.showCustomers();
+                    }else{
+                        this.GameHandler.drawSelectedCar(i);
+                        // this.GameHandler.destroyDots();
+                        // this.GameHandler.createDots();
+                        scene.currentlySelectedCar = i;
+                        // scene.socket.emit('createDots');
+                    }
+                }
+                this.GameHandler.hideAnyPath();
+                this.GameHandler.removeOutputPath();
+                if(scene.currentlySelectedCustomer!=null){
+                    scene.Maps[scene.currentMap].cars[scene.currentlySelectedCar].drawIndividualPath(scene.currentlySelectedCustomer);
+                    this.GameHandler.promptOutputPath(scene.currentlySelectedCar,scene.currentlySelectedCustomer);
+                    this.GameHandler.handleButton(scene.currentlySelectedCar,scene.currentlySelectedCustomer);
+                }
+                console.log('Clicked car index: '+ i);
+            })
+        }
+        for(let i=0; i< scene.Maps[scene.currentMap].customers.length; i++){
+            scene.Maps[scene.currentMap].customers[i].instance.on('pointerdown', () => {
+                console.log('Clicked customer index: '+ i);
+                scene.currentlySelectedCustomer = i;
+                this.GameHandler.hideAnyPath();
+                this.GameHandler.removeOutputPath();
+                if(scene.currentlySelectedCar!=null){
+                    scene.Maps[scene.currentMap].cars[scene.currentlySelectedCar].drawIndividualPath(scene.currentlySelectedCustomer);
+                    this.GameHandler.promptOutputPath(scene.currentlySelectedCar,scene.currentlySelectedCustomer);
+                    this.GameHandler.handleButton(scene.currentlySelectedCar,scene.currentlySelectedCustomer);
+                }
+            })
+        }
+    }
         this.GameHandler =  GameHandler;
         this.currentlySelectedDot = null;
         scene.socket =  io('http://localhost:3000/');
@@ -24,70 +104,7 @@ export default class SocketHandler{
         });
 
         scene.socket.on('placeScene', (index) =>{
-            console.log('Placing next scene');
-            /**
-             * Initializations of scene for each Map
-             */
-            scene.currentlySelected = null;
-            scene.finalCustomerSelected=[];
-            scene.finalCarSelected=[];
-            scene.customerWaitingTime = [];
-            scene.customerColor = [];
-            // this.GameHandler.hideAnyPath();
-            this.GameHandler.promptWaitTime();
-            this.GameHandler.removeOutputPath();
-            this.GameHandler.dots = [];
-            this.GameHandler.carId = null;
-            this.GameHandler.customerId = null;
-            this.GameHandler.infoDist = null;
-            this.GameHandler.pathButton = null;
-            this.GameHandler.selectedCar = null;
-            scene.hideBlueText = false;
-            scene.hideRedText = false;
-            // this.GameHandler.hideAnyPath();
-            scene.currentMap = index-1;
-            scene.Maps[index-1].show(scene);
-            scene.updateWaitTime();
-            for(let i=0; i< scene.Maps[scene.currentMap].cars.length; i++){
-                scene.Maps[scene.currentMap].cars[i].instance.on('pointerdown', () => {
-                    this.GameHandler.hideAnyPath(); 
-                    this.GameHandler.removeOutputPath();
-                    scene.socket.emit("selectedCar", i);
-                    if(scene.currentlySelected==null){
-                        this.GameHandler.drawSelectedCar(i);
-                        // this.GameHandler.hideCustomers();
-                        // this.GameHandler.createDots();
-                        scene.currentlySelected = i;
-                        // scene.socket.emit('createDots');
-                    }else{
-                        this.GameHandler.removeSelectedCar();
-                        if(scene.currentlySelected==i){
-                            scene.currentlySelected = null;
-                            // this.GameHandler.destroyDots();
-                            // this.GameHandler.showCustomers();
-                        }else{
-                            this.GameHandler.drawSelectedCar(i);
-                            // this.GameHandler.destroyDots();
-                            // this.GameHandler.createDots();
-                            scene.currentlySelected = i;
-                            // scene.socket.emit('createDots');
-                        }
-                    }
-                    console.log('Clicked car index: '+ i);
-                })
-            }
-            for(let i=0; i< scene.Maps[scene.currentMap].customers.length; i++){
-                scene.Maps[scene.currentMap].customers[i].instance.on('pointerdown', () => {
-                    console.log('Clicked customer index: '+ i);
-                    this.GameHandler.hideAnyPath();
-                    this.GameHandler.removeOutputPath();
-                    if(scene.currentlySelected!=null){
-                        scene.Maps[scene.currentMap].cars[scene.currentlySelected].drawIndividualPath(i);
-                        this.GameHandler.promptOutputPath(scene.currentlySelected,i);
-                        this.GameHandler.handleButton(scene.currentlySelected,i);
-                    }
-                })
-            }
+            this.placeSceneFunction();
         })
 
         scene.socket.on('makeDotsWork', () => {
@@ -96,10 +113,10 @@ export default class SocketHandler{
                     this.GameHandler.hideAnyPath();
                     console.log('Clicked Dot Id: ', i);
                     this.GameHandler.removeOutputPath();
-                    if(scene.currentlySelected!=null){
-                        scene.Maps[scene.currentMap].cars[scene.currentlySelected].drawIndividualPath(i);
-                        this.GameHandler.promptOutputPath(scene.currentlySelected,i);
-                        this.GameHandler.handleButton(scene.currentlySelected,i);
+                    if(scene.currentlySelectedCar!=null){
+                        scene.Maps[scene.currentMap].cars[scene.currentlySelectedCar].drawIndividualPath(i);
+                        this.GameHandler.promptOutputPath(scene.currentlySelectedCar,i);
+                        this.GameHandler.handleButton(scene.currentlySelectedCar,i);
                     }
                     
                 })
@@ -111,7 +128,7 @@ export default class SocketHandler{
         scene.socket.on('deleteNext',() => {
             scene.nextButton.destroy();
             Survey.StylesManager.applyTheme("defaultV2");
-    
+            
             var surveyJSON = {
             "title": "Survey",
             "logoPosition": "right",
@@ -256,6 +273,7 @@ export default class SocketHandler{
             scene.surveyButton.setInteractive();
             scene.surveyButton.setColor('#00ffff');
             scene.surveyButton.on('pointerdown', () => {
+                scene.scene.remove();
                 $("#surveyContainer").Survey({
                     model: survey,
                     onComplete: sendDataToServer
@@ -279,11 +297,13 @@ export default class SocketHandler{
         scene.socket.on('disableCarCustomerInteractivity',(inp) => {
             scene.Maps[scene.currentMap].cars[inp[0]].instance.disableInteractive();
             scene.Maps[scene.currentMap].customers[inp[1]].instance.disableInteractive();
+            scene.inputCount += 1;
             this.GameHandler.removeOutputPath();
             this.GameHandler.removeSelectedCar();
             this.GameHandler.removeSelectedCustomer();
             this.GameHandler.hideAnyPath();
-            scene.currentlySelected = null;
+            scene.currentlySelectedCar = null;
+            scene.currentlySelectedCustomer = null;
             scene.finalCustomerSelected.push(inp[1]);
             scene.finalCarSelected.push(inp[0]);
             if(scene.customerColor[inp[1]]===0){
@@ -303,6 +323,25 @@ export default class SocketHandler{
                 }
                 if(scene.blueCustomerText!=null){
                     scene.blueCustomerText.destroy();
+                }
+            }
+            if(scene.carColor[inp[1]]===0){
+                scene.hideGreenText = true;
+                if(this.GameHandler.greenWaitingCustomer!=null){
+                    this.GameHandler.greenWaitingCustomer.destroy();
+                    // scene.updateWaitTime();
+                }
+                if(scene.greenCustomerText!=null){
+                    scene.greenCustomerText.destroy();
+                }
+            }else{
+                scene.hideYellowText = true;
+                if(this.GameHandler.yellowWaitingCustomer!=null){
+                    this.GameHandler.yellowWaitingCustomer.destroy();
+                    // scene.updateWaitTime();
+                }
+                if(scene.yellowCustomerText!=null){
+                    scene.yellowCustomerText.destroy();
                 }
             }
             let carSelected = scene.Maps[scene.currentMap].cars[inp[0]];

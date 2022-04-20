@@ -9,32 +9,41 @@ export default class GameHandler{
         this.pathButton = null;
         this.selectedCar = null;
         this.selectedCustomer = null;
-        this.waitingTimeHeader = null;
+        this.waitingTimeHeaderCustomer = null;
+        this.waitingTimeHeaderCar = null;
         this.blueWaitingCustomer = null;
         this.redWaitingCustomer = null;
+        this.yellowWaitingCustomer = null;
+        this.greenWaitingCustomer = null;
 
         this.promptOutputPath = (carId,customerId) => {
-            this.carId = scene.add.text(1300,100, "Car id: " + carId);
-            this.customerId = scene.add.text(1300,130, "Customer id: " + customerId);
+            this.carId = scene.add.text(1320,100, "Car id: " + carId).setColor('#000000');
+            this.customerId = scene.add.text(1320,130, "Customer id: " + customerId).setColor('#000000');
             let arr = scene.Maps[scene.currentMap].outputCars[carId];
             for(let i=0; i<arr.length; i++){
                 if(arr[i][0]==customerId){
-                    this.infoDist = scene.add.text(1300, 160, "Distance: " + arr[i][1]);
+                    this.infoDist = scene.add.text(1320, 160, "Distance: " + arr[i][1]).setColor('#000000');
                     break;
                 }
             }
-            this.pathButton = scene.add.text(1300,250,"Select Path").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.pathButton = scene.add.text(1320,250,"CLICK HERE OR PRESS ENTER").setFontSize(20).setFontFamily('Trebuchet MS');
             this.pathButton.setInteractive();
             this.pathButton.setColor('#00ffff');
         }
 
-        this.promptWaitTime = () => {
-            this.waitingTimeHeader = scene.add.text(1380,420,"Waiting Time").setFontSize(20).setFontFamily('Trebuchet MS');
-            this.waitingTimeHeader.setColor('#00ffff');
+        this.promptWaitTimeCustomer = () => {
+            this.waitingTimeHeaderCustomer = scene.add.text(1380,420,"Waiting Time Customer").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.waitingTimeHeaderCustomer.setColor('#00ffff');
             this.blueWaitingCustomer = scene.add.image(1380, 560 , 'blueBoy');
             this.redWaitingCustomer = scene.add.image(1380, 710 , 'redBoy');
         }
 
+        this.promptWaitTimeCar = () => {
+            this.waitingTimeHeaderCar = scene.add.text(1700,420,"Waiting Time Car").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.waitingTimeHeaderCar.setColor('#00ffff');
+            this.yellowWaitingCustomer = scene.add.image(1700, 560 , 'yellowCar');
+            this.greenWaitingCustomer = scene.add.image(1700, 710 , 'greenCar');
+        }
         
 
         this.drawSelectedCar = (carId) => {
