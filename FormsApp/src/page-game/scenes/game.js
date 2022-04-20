@@ -28,10 +28,10 @@ export default class Game extends Phaser.Scene {
         if(this.timeRemaining!=null){
             this.timeRemaining.destroy();
         }
-        this.timeRemaining = this.add.text(1670,900, this.sceneTime).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
         this.sceneTime-=1;
+        this.timeRemaining = this.add.text(1670,900, this.sceneTime).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
         if(this.sceneTime==0){
-            this.SocketHandler.placeSceneFunction();
+            this.socket.emit('NextScene', this.socket.id);
             // this.sceneTime = 50;
         }
         for(let i=0; i<this.customerWaitingTime.length; i++){
@@ -198,7 +198,7 @@ export default class Game extends Phaser.Scene {
         this.hideRedText = false;
         this.hideGreenText = false;
         this.hideYellowText = false;
-        this.sceneTime = 50;
+        this.sceneTime = 11;
         this.timeRemainingSign = this.add.text(1500,900, 'Time Remaining: ').setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
         this.updateWaitTime();
         this.enter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -220,7 +220,7 @@ export default class Game extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.enter) && this.currentlySelectedCustomer!=null && this.currentlySelectedCar!=null)
         {
             console.log('Path Selected!!');
-            this.socket.emit("selectedCustomer",this.currentlySelectedCustomer,this.currentlySelectedCar);
+            this.socket.emit("selectedCustomer",this.currentlySelectedCar,this.currentlySelectedCustomer);
         }
     }
 }

@@ -7,7 +7,7 @@ import './defaultV2.css';
 export default class SocketHandler{
     constructor(scene, GameHandler){
 
-        this.placeSceneFunction = () => {
+        this.placeSceneFunction = (index) => {
         console.log('Placing next scene');
         /**
          * Initializations of scene for each Map
@@ -89,7 +89,7 @@ export default class SocketHandler{
     }
         this.GameHandler =  GameHandler;
         this.currentlySelectedDot = null;
-        scene.socket =  io('http://localhost:3000/');
+        scene.socket =  io('http://taxi-dispatcher.mpi-sws.org/');
         scene.socket.on('connect', () => {
             console.log('Connected!');
             scene.nextButton.setInteractive();
@@ -104,7 +104,7 @@ export default class SocketHandler{
         });
 
         scene.socket.on('placeScene', (index) =>{
-            this.placeSceneFunction();
+            this.placeSceneFunction(index);
         })
 
         scene.socket.on('makeDotsWork', () => {
@@ -325,7 +325,7 @@ export default class SocketHandler{
                     scene.blueCustomerText.destroy();
                 }
             }
-            if(scene.carColor[inp[1]]===0){
+            if(scene.carColor[inp[0]]===0){
                 scene.hideGreenText = true;
                 if(this.GameHandler.greenWaitingCustomer!=null){
                     this.GameHandler.greenWaitingCustomer.destroy();
