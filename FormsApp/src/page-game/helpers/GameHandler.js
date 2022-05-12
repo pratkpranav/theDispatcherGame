@@ -15,34 +15,41 @@ export default class GameHandler{
         this.redWaitingCustomer = null;
         this.yellowWaitingCustomer = null;
         this.greenWaitingCustomer = null;
+        this.promptMessageText = null;
 
         this.promptOutputPath = (carId,customerId) => {
-            this.carId = scene.add.text(1320,100, "Car id: " + carId).setColor('#000000');
-            this.customerId = scene.add.text(1320,130, "Customer id: " + customerId).setColor('#000000');
+            this.carId = scene.add.text(1320,600, "Car id: " + carId).setColor('#000000');
+            this.customerId = scene.add.text(1320,630, "Customer id: " + customerId).setColor('#000000');
             let arr = scene.Maps[scene.currentMap].outputCars[carId];
             for(let i=0; i<arr.length; i++){
                 if(arr[i][0]==customerId){
-                    this.infoDist = scene.add.text(1320, 160, "Distance: " + arr[i][1]).setColor('#000000');
+                    this.infoDist = scene.add.text(1320, 660, "Distance: " + arr[i][1]).setColor('#000000');
                     break;
                 }
             }
-            this.pathButton = scene.add.text(1320,250,"CLICK HERE OR PRESS ENTER").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.pathButton = scene.add.text(1320,800,"CLICK HERE OR PRESS ENTER").setFontSize(20).setFontFamily('Trebuchet MS');
             this.pathButton.setInteractive();
             this.pathButton.setColor('#00ffff');
         }
 
         this.promptWaitTimeCustomer = () => {
-            this.waitingTimeHeaderCustomer = scene.add.text(1380,420,"Waiting Time Customer").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.waitingTimeHeaderCustomer = scene.add.text(1380,120,"Waiting Time Customer").setFontSize(20).setFontFamily('Trebuchet MS');
             this.waitingTimeHeaderCustomer.setColor('#00ffff');
-            this.blueWaitingCustomer = scene.add.image(1380, 560 , 'blueBoy');
-            this.redWaitingCustomer = scene.add.image(1380, 710 , 'redBoy');
+            this.blueWaitingCustomer = scene.add.image(1400, 260 , 'blueBoy');
+            this.redWaitingCustomer = scene.add.image(1400, 410 , 'redBoy');
         }
 
         this.promptWaitTimeCar = () => {
-            this.waitingTimeHeaderCar = scene.add.text(1700,420,"Waiting Time Car").setFontSize(20).setFontFamily('Trebuchet MS');
+            this.waitingTimeHeaderCar = scene.add.text(1700,120,"Waiting Time Car").setFontSize(20).setFontFamily('Trebuchet MS');
             this.waitingTimeHeaderCar.setColor('#00ffff');
-            this.yellowWaitingCustomer = scene.add.image(1700, 560 , 'yellowCar');
-            this.greenWaitingCustomer = scene.add.image(1700, 710 , 'greenCar');
+            this.yellowWaitingCustomer = scene.add.image(1700, 260 , 'yellowCar');
+            this.greenWaitingCustomer = scene.add.image(1700, 410 , 'greenCar');
+        }
+
+        this.promptMessage = (msg) => {
+            console.log(msg);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+            this.promptMessageText = scene.add.text(1320,600,msg).setColor('#8B0000');
+            this.promptMessageText.setFontSize(50);
         }
         
 
@@ -84,6 +91,9 @@ export default class GameHandler{
             }
             if(this.pathButton != null){
                 this.pathButton.destroy();
+            }
+            if(this.promptMessageText != null){
+                this.promptMessageText.destroy();
             }
         }
 

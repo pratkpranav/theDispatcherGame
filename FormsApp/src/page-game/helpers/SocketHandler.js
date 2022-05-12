@@ -89,7 +89,7 @@ export default class SocketHandler{
     }
         this.GameHandler =  GameHandler;
         this.currentlySelectedDot = null;
-        scene.socket =  io('http://taxi-dispatcher.mpi-sws.org/');
+        scene.socket =  io('http://localhost:3000/');
         scene.socket.on('connect', () => {
             console.log('Connected!');
             scene.nextButton.setInteractive();

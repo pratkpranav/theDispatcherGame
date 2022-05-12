@@ -13,6 +13,10 @@ import redBoy from '../assets/redBoy.jpg'
 import blueBoy from '../assets/blueBoy.jpg'
 import greenCar from '../assets/greenCar.jpg'
 import yellowCar from '../assets/yellowCar.jpg'
+import input1 from '../assets/1.json'
+import input2 from '../assets/2.json'
+import input3 from '../assets/3.json'
+import input4 from '../assets/4.json'
 
 
 export default class Game extends Phaser.Scene {
@@ -28,8 +32,12 @@ export default class Game extends Phaser.Scene {
         if(this.timeRemaining!=null){
             this.timeRemaining.destroy();
         }
-        this.sceneTime-=1;
-        this.timeRemaining = this.add.text(1670,900, this.sceneTime).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+        if(this.sceneTime!=0){
+            this.sceneTime-=1;
+            this.timeRemaining = this.add.text(1670,900, this.sceneTime).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+        }else{
+            this.timeRemaining = this.add.text(1670,900, 0).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+        }
         if(this.sceneTime==0){
             this.socket.emit('NextScene', this.socket.id);
             // this.sceneTime = 50;
@@ -41,7 +49,7 @@ export default class Game extends Phaser.Scene {
                         this.blueCustomerText.destroy();
                     }
                     if(!this.hideBlueText){
-                        this.blueCustomerText = this.add.text(1500,560,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+                        this.blueCustomerText = this.add.text(1500,260,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
                     }
                     //blue
                 }else{
@@ -49,7 +57,7 @@ export default class Game extends Phaser.Scene {
                         this.redCustomerText.destroy();
                     }
                     if(!this.hideRedText){
-                        this.redCustomerText = this.add.text(1500,710,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+                        this.redCustomerText = this.add.text(1500,410,this.customerWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
                     }
                     //red
                 }
@@ -62,7 +70,7 @@ export default class Game extends Phaser.Scene {
                         this.yellowCarText.destroy();
                     }
                     if(!this.hideYellowText){
-                        this.yellowCarText = this.add.text(1820,560,this.carWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+                        this.yellowCarText = this.add.text(1820,260,this.carWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
                     }
                     //yellow
                 }else{
@@ -70,7 +78,7 @@ export default class Game extends Phaser.Scene {
                         this.greenCarText.destroy();
                     }
                     if(!this.hideGreenText){
-                        this.greenCarText = this.add.text(1820,710,this.carWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
+                        this.greenCarText = this.add.text(1820,410,this.carWaitingTime[i]).setFontSize(20).setFontFamily('Trebuchet MS').setColor('#000000');
                     }
                     //green
                 }
@@ -78,6 +86,23 @@ export default class Game extends Phaser.Scene {
         }
     }
 
+    findMat(input) {
+        return input["scene"]["matrix"];
+    }
+
+    findData(input) {
+        let data = {
+            "Id": input["scene"]["Id"], 
+            "cordX": input["scene"]["cordX"],
+            "cordY": input["scene"]["cordY"],
+            "isCar": input["scene"]["isCar"],
+            "isCustomer": input["scene"]["isCustomer"],
+            "isRed": input["scene"]["isRed"],
+            "isBlue": input["scene"]["isBlue"],
+            "WaitingTime": input["scene"]["WaitingTime"]
+        }
+        return data;
+    }
 
     preload() {
         this.load.image('car', carImg);
@@ -89,87 +114,31 @@ export default class Game extends Phaser.Scene {
         this.load.image('blueBoy', blueBoy);
         this.load.image('redBoy', redBoy);
         this.load.image('greenCar', greenCar); //isRed
-        this.load.image('yellowCar', yellowCar); //isBlue
+        this.load.image('yellowCar', yellowCar); //
+        this.load.json('input1', input1);
+        this.load.json('input2', input2);
+        this.load.json('input3', input3);
+        this.load.json('input4', input4);
     }
 
 
     create() {
 
         // enterKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-        const mat0 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1], [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]];
-        //second input
-        const data0 = {
-            "cordX": [1, 3, 16, 5],
-            "cordY": [1, 3, 13, 5],
-            "isCar": [1, 0, 0, 1],
-            "isCustomer": [0, 1, 1, 0],
-            "isRed": [1, 0, 1, 0],
-            "isBlue": [0, 1, 0, 1],
-            "WaitingTime": [6,20,20,13]
-        };
-
-        const mat1 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1], [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]];
-        //second input
-        const data1 = {
-            "cordX": [2, 9, 9, 15],
-            "cordY": [8, 2, 14, 8],
-            "isCar": [1, 0, 0, 1],
-            "isCustomer": [0, 1, 1, 0],
-            "isRed": [0, 0, 1, 1],
-            "isBlue": [1, 1, 0, 0],
-            "WaitingTime": [7,5,50,19]
-        };
+        let input_data_1 = this.cache.json.get('input1');
+        let input_data_2 = this.cache.json.get('input2');
+        let input_data_3 = this.cache.json.get('input3');
+        let input_data_4 = this.cache.json.get('input4');
         
-        const mat2 = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1], [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0]];
-        //second input
-        const data2 = {
-            "cordX": [3, 12, 12, 5],
-            "cordY": [10, 9, 11, 10],
-            "isCar": [1, 0, 0, 1],
-            "isCustomer": [0, 1, 1, 0],
-            "isRed": [0, 0, 1, 1],
-            "isBlue": [1, 1, 0, 0],
-            "WaitingTime": [4,5,15,10]
-        };
-        
-        const mat3 = [[0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1], [0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], 
-        [0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1], [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0], [1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0], 
-        [1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0], [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0]];
-        //second input
-        const data3 = {
-            "cordX": [10, 2, 4, 8],
-            "cordY": [7, 13, 11, 9],
-            "isCar": [1, 0, 0, 1],
-            "isCustomer": [0, 1, 1, 0],
-            "isRed": [1, 0, 1, 0],
-            "isBlue": [0, 1, 0, 1],
-            "WaitingTime": [19,4,13,20]
-        };
-        
-        
-        // let map1 = this.cache.json.get('FileA');
-        // map2 = this.add.tilemap('fileB', 16, 16);
-        // console.log(map1);
-        // console.log(map2);
 
         this.Maps = [];
-        let fmap = new NewMap(this,mat0,data0);
+        let fmap = new NewMap(this,this.findMat(input_data_1),this.findData(input_data_1));
         this.Maps.push(fmap);
-        fmap = new NewMap(this,mat1,data1);
+        fmap = new NewMap(this,this.findMat(input_data_2),this.findData(input_data_2));
         this.Maps.push(fmap);
-        fmap = new NewMap(this,mat2,data2);
+        fmap = new NewMap(this,this.findMat(input_data_3),this.findData(input_data_3));
         this.Maps.push(fmap);
-        fmap = new NewMap(this,mat3,data3);
+        fmap = new NewMap(this,this.findMat(input_data_4),this.findData(input_data_4));
         this.Maps.push(fmap);
         //current Map index
         this.currentMap = 0; ;
@@ -213,8 +182,8 @@ export default class Game extends Phaser.Scene {
             
             for(let i=0; i<this.customerWaitingTime.length; i++){
                 
-                this.customerWaitingTime[i]+=1;
-                this.carWaitingTime[i]+=1;
+                // this.customerWaitingTime[i]+=1;
+                // this.carWaitingTime[i]+=1;
             }
         }
         if (Phaser.Input.Keyboard.JustDown(this.enter) && this.currentlySelectedCustomer!=null && this.currentlySelectedCar!=null)

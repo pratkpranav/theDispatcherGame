@@ -6,7 +6,7 @@ export default class InteractiveHandler{
         scene.nextButton.on('pointerdown', () => {
             console.log('Count: ', scene.inputCount)
             if(scene.inputCount!=2){
-                alert('Match Each Pair!');
+                this.GameHandler.promptMessage('Match Each Pair!');
             }else{
                 scene.socket.emit('NextScene', scene.socket.id);
             }

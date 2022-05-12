@@ -21,6 +21,8 @@ class StateMachine{
         this.id = id;
         this.currentState = 1;
         this.stateData = [];
+        this.startTimeScenarios = [];
+        this.endTimeScenarios = [];
         this.startTime = startTime;
         this.endTime = null;
     }
@@ -38,7 +40,7 @@ app.use(cors())
 app.use((serveStatic(__dirname + "/FormsApp/dist")));
 
 
-let totalslides = 3;
+let totalslides = 4;
 let statestore = [];
 
 
@@ -58,11 +60,13 @@ io.on('connection', function(socket){
         if(statestore[i].id === roomId){
             if(statestore[i].stateData.length<statestore[i].currentState){
                 statestore[i].stateData.push([]);
-                statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
-                statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                // statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
+                // statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                statestore[i].startTimeScenarios.push([formatted]);    
                 break;
             }else{
-                statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                // statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                statestore[i].startTimeScenarios.push([formatted]);    
             }
         }
     }
@@ -76,14 +80,20 @@ io.on('connection', function(socket){
             if(statestore[i].id === roomId){
                 if(statestore[i].stateData.length<=statestore[i].currentState){
                     console.log('New Entry');
-                    statestore[i].stateData[statestore[i].stateData.length-1].push([formatted]);
+                    // statestore[i].stateData[statestore[i].stateData.length-1].push([formatted]);
+                    statestore[i].startTimeScenarios.push([formatted]);    
+                    statestore[i].endTimeScenarios.push([formatted]);
                     statestore[i].stateData.push([]);
                     statestore[i].stateData[statestore[i].currentState-1].push([statestore[i].currentState]);
-                    statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                    // statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
                     break;
                 }else{
                     console.log('Old Entry');
-                    statestore[i].stateData[statestore[i].currentState-1].push([formatted]);
+                    // statestore[i].stateData[statestore[i].currentState-1].push([formatted]);    
+                    statestore[i].startTimeScenarios.push([formatted]);    
+                    statestore[i].endTimeScenarios.push([formatted]);
+            
+            
                 }
             }
         }
@@ -135,7 +145,9 @@ io.on('connection', function(socket){
         let fileName = roomId.concat(".json");
         let dt = dateTime.create();
         let formatted = dt.format('Y-m-d H:M:S');
-        statestore[finalId].addEndTime(formatted);
+        statestore[finalId].addEndTime(formatted);    
+        statestore[finalId].endTimeScenarios.push([formatted]);
+        statestore[finalId].stateData[statestore[finalId].currentState-1].push([statestore[finalId].currentState]);
         console.log(fileName);
         fs.writeFile(path.join(__dirname,"Data",fileName), JSON.stringify(statestore[finalId]), 'utf8', function (err) {
             if (err) {
