@@ -1,6 +1,12 @@
 import Car from './Car';
 import Customer from './Customer';
 
+/**
+ * This class builds the Map, which includes the grid, 
+ * places, car, customers and the barriers and run bfs
+ * to find the path between every car and every customer.
+ */
+
 export default class NewMap{
     constructor(scene,mat, data){
         this.mat = mat;
@@ -8,6 +14,8 @@ export default class NewMap{
         this.cars = [];
         this.customers = [];
     }
+
+
     addcars(x, y, screenX, screenY, v) {
         let car = new Car( x, y, screenX, screenY,v);
         this.cars.push(car);
@@ -17,6 +25,12 @@ export default class NewMap{
         let customer = new Customer(x, y, screenX, screenY, v);
         this.customers.push(customer);
     }
+
+    /**
+     * This is the function which implements the BFS algorithm to
+     * find the shortest path between each of the car and each of
+     * the customers. 
+     */
 
     bfs(){
         let changedmat = [];
@@ -115,7 +129,14 @@ export default class NewMap{
     }
     
 
-
+    /**
+     * This function ouputs the grids, customers, cars and barriers 
+     * on the screen. It also initializes instances of cars using 
+     * car class and customer using customer class.
+     * 
+     * @param {Phaser.Scene} scene It is variable of type Phaser.Scene, which is declared in game.js
+     */
+    
     show(scene){
         let mat = this.mat;
         let data = this.data;

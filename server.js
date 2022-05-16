@@ -16,6 +16,15 @@ const dateTime = require('node-datetime');
 const storeDirectory  = "./Data/";
 const util = require('util');
 
+/**
+ * This struct is used to store all the info 
+ * which is needed to store in the json file. 
+ * However, If needed to store more info, 
+ * just add a new field in here and get the 
+ * data from the client and store it in the 
+ * struct. Finally, this struct is getting 
+ * saved as json.
+ */
 class StateMachine{
     constructor(id, startTime){
         this.id = id;
@@ -44,9 +53,18 @@ let totalslides = 4;
 let statestore = [];
 
 
-
+/**
+ * This trigger start as soon as the browser client
+ * socket establishes a connection with server 
+ * side socket.
+ */
 io.on('connection', function(socket){
 
+    /**
+     * Each new connection is added to a new room, so 
+     * that the each of the request from the server 
+     * is made distinct.
+     */
     let roomId = uuidv4();
     socket.join(roomId);
     console.log(roomId);
@@ -71,6 +89,14 @@ io.on('connection', function(socket){
         }
     }
     
+    /**
+     * The trigger here is initiated as soon as input from
+     *  the last scenario is received or the time is up.
+     *  In either of those scenario, the following trigger
+     *  gives the browser the scenario number which they
+     *  need to show. This function could alos be modified
+     *  if there is a need to randomize the input.
+     */
     socket.on('NextScene',function(socketID){
         console.log('Sending Next Scene');
         let current = 0;
@@ -112,7 +138,11 @@ io.on('connection', function(socket){
         }
     })
 
-
+    /**
+     * Here, the required input is received by the server which the user
+     *  have put on the browser. Here carId and customerId are the Ids
+     *  which are mapped by the customer for the scenario last asked.
+     */
     socket.on('selectedCustomer',function(carId,customerID){
         console.log('Received Car Input')
         let cur = [];
@@ -127,11 +157,23 @@ io.on('connection', function(socket){
         io.to(roomId).emit('disableCarCustomerInteractivity',cur);
     })
     
+    /**
+     * This trigger is not used in the latest version. 
+     * Earlier it was used to send the signal from the
+     * server to convert customer instance to a dot 
+     * instance.
+     */
     socket.on('createDots',function(){
         console.log('Making Dots Work!!');
         io.to(roomId).emit('makeDotsWork');
     })
 
+    /**
+     * This trigger is called by the web client as soon 
+     * as the survey is filled by the user. The data 
+     * variable contains the data added by the users 
+     * on the site.
+     */
     socket.on('survey-data',function(data){
 
         console.log(roomId,data);

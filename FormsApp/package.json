@@ -20,12 +20,15 @@
     "json-stringify": "^1.0.0",
     "method-override": "^3.0.0",
     "normalize.css": "^8.0.1",
+    "nouislider": "^15.6.0",
     "path": "^0.12.7",
     "phaser": "^3.55.2",
     "react": "^17.0.2",
     "socket.io-client": "^4.4.1",
     "survey-jquery": "^1.9.21",
-    "survey-react": "^1.9.19"
+    "survey-react": "^1.9.19",
+    "surveyjs-widgets": "^1.9.29",
+    "wnumb": "^1.2.0"
   },
   "scripts": {
     "start": "webpack serve --config webpack.dev.js",

@@ -1,0 +1,24 @@
+Instructions:
+
+Starting the game(On local server):
+1. Open two terminals(one in the current directory, one in the {current}/FormsApp directory)
+2. Run the command 'npm run start' on both the terminals
+3. Open the web browser and got to http://localhost:8080
+
+Adding Scene to the game
+1. Follow the same format of input as already given in json files.
+2. Once the json file is ready, add an import startment as
+    -- import input{n+1} from {location}
+3. In preload function add the line
+    -- this.load.json('input{n+1}', input{n+1})
+4. In the create function then add the line
+    -- let input_data_{n+1} = this.cache.json.get('input{n+1}')
+5.  After that adding last line, add the following two lines
+    -- fmap = new NewMap(this,this.findMat(input_data_{n+1}),this.findData(input_data_{n+1}));
+    -- this.Maps.push(fmap);
+
+    Keep in mind to follow the order as already followed in the create function, means,
+    line in Instruction(4) is added just after the last similar line is added. Same goes
+    for all the lines in the 'game.js'.
+
+Restarting the Server

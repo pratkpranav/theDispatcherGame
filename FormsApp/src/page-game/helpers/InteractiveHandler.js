@@ -1,3 +1,11 @@
+/**
+ * This clas handles the interaction between the user
+ * and the game. This function in the current version, 
+ * just controls the interaction for the first scene, 
+ * for rest of scenes the interaction is handled in 
+ * socket handle itself.
+ */
+
 export default class InteractiveHandler{
     constructor(scene, GameHandler){
 
@@ -33,6 +41,12 @@ export default class InteractiveHandler{
         // scene.closeButton.on('pointerout', () => {
         //     scene.closeButton.setColor('#00ffff');
         // })
+
+        /**
+         * This part of code, handles the logic for selection of
+         * path and the sending of information from client to server
+         * using sockets, as defined in SocketHandler.js 
+         */
 
         for(let i=0; i< scene.Maps[0].cars.length; i++){
             scene.Maps[scene.currentMap].cars[i].instance.on('pointerdown', () => {   
