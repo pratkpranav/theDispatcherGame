@@ -3,6 +3,7 @@ Instructions:
 Installation:
 run ´npm i´
 run ´npm i survey-react´
+run ´npm i react-dom react´
 
 Starting the game(On local server):
 1. Open two terminals(one in the current directory, one in the {current}/FormsApp directory)
